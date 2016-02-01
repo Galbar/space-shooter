@@ -27,6 +27,7 @@ cd ../space-shooter
 make
 
 # Add libraries to the linker path
+# (for OSX the variable is DYLD_LIBRARY_PATH)
 export LD_LIBRARY_PATH=/root/folder/Hum2D/lib/:/root/folder/SFML/lib/
 
 # Run game
