@@ -1,0 +1,10 @@
+TEXTURES
+sprites sprites.png
+
+ANIMATIONS
+player player.anim
+bullet_explosion bullet_explode.anim
+enemy_walking enemy_walking.anim
+enemy_attack1 enemy_attack1.anim
+enemy_attack1_blood enemy_attack1_blood.anim
+enemy_win enemy_win.anim

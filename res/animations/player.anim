@@ -1,0 +1,10 @@
+# texture name
+sprites
+# offset_x offset_y margin_x margin_y width height
+0 0 0 0 48 48
+# number of frames
+8
+# frame_order
+0 1 2 3 5 6 7 8
+# time per frame (ms)
+75 75 75 75 75 75 75 75
