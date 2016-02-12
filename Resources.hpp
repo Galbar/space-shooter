@@ -60,7 +60,7 @@ void loadResources(h2d::SFMLPlugin& sfml, const std::string& resources_filename)
     std::string word, TYPE;
     while (ss >> word)
     {
-        if (word == "TEXTURES" or word == "ANIMATIONS")
+        if (word == "TEXTURES" or word == "ANIMATIONS" or word == "SOUNDS" or word == "MUSIC")
         {
             TYPE = word;
             ss >> word;
@@ -77,6 +77,18 @@ void loadResources(h2d::SFMLPlugin& sfml, const std::string& resources_filename)
             std::string file;
             ss >> file;
             loadAnimation(sfml, word, "res/animations/" + file);
+        }
+        else if (TYPE == "SOUNDS")
+        {
+            std::string file;
+            ss >> file;
+            sfml.sounds().load(word, "res/sounds/" + file);
+        }
+        else if (TYPE == "MUSIC")
+        {
+            std::string file;
+            ss >> file;
+            sfml.music().load(word, "res/music/" + file);
         }
     }
 }

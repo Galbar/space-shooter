@@ -22,20 +22,22 @@ public:
     void init() override
     {
         h2d::SFMLPlugin* sfml = actor().game().getPlugin<h2d::SFMLPlugin>();
-        p_explode = &actor().addBehaviour<h2d::AnimatedSprite>(sfml->spriteAnimations().get("bullet_explosion"));
+        p_explode = actor().addBehaviour<h2d::AnimatedSprite>(sfml->spriteAnimations().get("bullet_explosion"));
         p_explode->disable();
         p_explode->setLooping(false);
         p_explode->sprite().setOrigin(12, 12);
-        p_bullet = &actor().addBehaviour<h2d::Sprite>(*sfml->textures().get("sprites"), sf::IntRect(0, 96, 24, 24));
+        p_bullet = actor().addBehaviour<h2d::Sprite>(*sfml->textures().get("sprites"), sf::IntRect(0, 96, 24, 24));
         p_bullet->sprite().setOrigin(12, 18);
 
-        p_kinematic = &actor().addBehaviour<h2d::Kinematic>();
-        p_kinematic->velocity_x = p_comp_x * s_vel;
-        p_kinematic->velocity_y = p_comp_y * s_vel;
+        p_kinematic = actor().addBehaviour<h2d::Kinematic>();
+        p_kinematic->velocity().x = p_comp_x * s_vel;
+        p_kinematic->velocity().y = p_comp_y * s_vel;
 
         double angleInRadians = std::atan2(p_comp_y, p_comp_x);
         double angleInDegrees = (angleInRadians / M_PI) * 180.0;
         p_bullet->transform().rotation = angleInDegrees - 90;
+
+        sfml->sounds().play("gun_shot", 40, false, true);
         clk.reset();
     }
 
@@ -45,8 +47,8 @@ public:
         {
             p_bullet->disable();
             p_explode->enable();
-            p_kinematic->velocity_x = 0;
-            p_kinematic->velocity_y = 0;
+            p_kinematic->velocity().x = 0;
+            p_kinematic->velocity().y = 0;
         }
         else if (p_explode->status() == h2d::AnimatedSprite::STOPPED)
         {
@@ -75,8 +77,8 @@ public:
                     actor().game().destroy(*a);
                     p_bullet->disable();
                     p_explode->enable();
-                    p_kinematic->velocity_x = 0;
-                    p_kinematic->velocity_y = 0;
+                    p_kinematic->velocity().x = 0;
+                    p_kinematic->velocity().y = 0;
                     break;
                 }
             }

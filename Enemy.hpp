@@ -1,5 +1,6 @@
 #ifndef ENEMY_HPP
 #define ENEMY_HPP
+#include <iostream>
 #include "Hum2D/Hum2D.hpp"
 #include "Hum2D/SFML.hpp"
 #include "Resources.hpp"
@@ -11,7 +12,8 @@ class Enemy : public h2d::Behaviour
 public:
     enum State { WALKING, HITTING, WAITING, WIN, DONE };
     Enemy(Player* player):
-    p_player(player)
+    p_player(player),
+    p_sound(0)
     {
         if (s_vel == -1)
         {
@@ -23,22 +25,30 @@ public:
 
     void init() override
     {
-        p_kinematic = &actor().addBehaviour<h2d::Kinematic>();
+        p_kinematic = actor().addBehaviour<h2d::Kinematic>();
         p_prev_rotation = 0;
 
         p_sfml = actor().game().getPlugin<h2d::SFMLPlugin>();
-        p_sprite = &actor().addBehaviour<h2d::AnimatedSprite>(p_sfml->spriteAnimations().get("enemy_walking"));
+        p_sprite = actor().addBehaviour<h2d::AnimatedSprite>(p_sfml->spriteAnimations().get("enemy_walking"));
         p_sprite->sprite().setOrigin(24, 18);
         p_sprite->pause();
         actor().transform().rotation = -90;
 
-        p_blood = &actor().addBehaviour<h2d::AnimatedSprite>(p_sfml->spriteAnimations().get("enemy_attack1_blood"));
+        p_blood = actor().addBehaviour<h2d::AnimatedSprite>(p_sfml->spriteAnimations().get("enemy_attack1_blood"));
         p_blood->sprite().setOrigin(24, -17);
         p_blood->setLooping(false);
         p_blood->stop();
         p_blood->disable();
 
         p_status = WAITING;
+    }
+
+    void onDestroy() override
+    {
+        if (p_sfml->sounds().get(p_sound) != nullptr)
+        {
+            p_sfml->sounds().get(p_sound)->stop();
+        }
     }
 
     void fixedUpdate() override
@@ -70,11 +80,11 @@ public:
         {
             delta += 360;
         }
-        p_kinematic->rotation_velocity = delta / actor().game().fixedUpdateTime().asSeconds();
+        p_kinematic->velocity().rotation = delta / actor().game().fixedUpdateTime().asSeconds();
         p_prev_rotation = angleInDegrees;
 
-        p_kinematic->velocity_x = 0;
-        p_kinematic->velocity_y = 0;
+        p_kinematic->velocity().x = 0;
+        p_kinematic->velocity().y = 0;
 
         double mod = sqrt(cuad(x) + cuad(y));
         if (p_status == WIN)
@@ -91,11 +101,18 @@ public:
         {
             x /= mod;
             y /= mod;
-            p_kinematic->velocity_x = x * s_vel;
-            p_kinematic->velocity_y = y * s_vel;
+            p_kinematic->velocity().x = x * s_vel;
+            p_kinematic->velocity().y = y * s_vel;
             if (p_sprite->status() != h2d::AnimatedSprite::PLAYING)
             {
                 p_sprite->play();
+            }
+
+            if (p_sfml->sounds().get(p_sound) == nullptr and rand()%100 < 10)
+            {
+                auto info = p_sfml->sounds().play("roar", 1000);
+                info.second->setAttenuation(0.1);
+                p_sound = info.first;
             }
         }
         else
@@ -108,6 +125,9 @@ public:
                     p_sprite->play();
                     p_sprite->setLooping(false);
                     p_status = HITTING;
+                    sf::Sound* sound = p_sfml->sounds().play("enemy_attack", 50).second;
+                    sound->setPosition(actor().transform().x, actor().transform().y, 0);
+                    sound->setAttenuation(0.01);
                 }
                 else
                 {
@@ -142,6 +162,11 @@ public:
                 }
             }
         }
+        sf::Sound* sound = p_sfml->sounds().get(p_sound);
+        if (sound != nullptr)
+        {
+            sound->setPosition(actor().transform().x, actor().transform().y, 0);
+        }
     }
 
     static const char* behaviourName()
@@ -160,6 +185,7 @@ private:
     h2d::AnimatedSprite* p_sprite;
     h2d::AnimatedSprite* p_blood;
     h2d::SFMLPlugin* p_sfml;
+    h2d::SoundId p_sound;
 };
 double Enemy::s_vel = -1;
 double Enemy::s_min_player_dist = -1;

@@ -8,3 +8,11 @@ enemy_walking enemy_walking.anim
 enemy_attack1 enemy_attack1.anim
 enemy_attack1_blood enemy_attack1_blood.anim
 enemy_win enemy_win.anim
+
+SOUNDS
+gun_shot Laser.ogg
+enemy_attack roar.ogg
+roar breathing_enemy.ogg
+
+MUSIC
+ambiance 29_Kaltoran_Craft_FE.ogg

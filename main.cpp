@@ -14,14 +14,16 @@ int main()
     h2d::KinematicWorld kinematic_world;
     g.addPlugin(kinematic_world);
 
-    auto& a = g.makeActor();
-    auto& player = a.addBehaviour<Player>();
-    a.transform().x = 200;
-    a.transform().y = 200;
+    auto a = g.makeActor();
+    auto player = a->addBehaviour<Player>();
+    a->transform().x = 200;
+    a->transform().y = 200;
 
-    EnemySpawner spawner(&player);
+    EnemySpawner spawner(player);
     g.addPlugin(spawner);
-
+    sf::Music* music = sfml.music().get("ambiance");
+    music->setLoop(true);
+    music->play();
     g.run();
     return 0;
 }
