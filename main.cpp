@@ -7,21 +7,17 @@
 int main()
 {
     h2d::Game g(60);
-    h2d::SFMLPlugin sfml(1000, 1000, "juego");
-    loadResources(sfml, "res/resources.def");
-    g.addPlugin(sfml);
-
-    h2d::KinematicWorld kinematic_world;
-    g.addPlugin(kinematic_world);
+    g.addPlugin<h2d::KinematicWorld>();
+    h2d::SFMLPlugin* sfml = g.addPlugin<h2d::SFMLPlugin>(1000, 1000, "juego");
+    loadResources(*sfml, "res/resources.def");
 
     auto a = g.makeActor();
     auto player = a->addBehaviour<Player>();
     a->transform().x = 200;
     a->transform().y = 200;
 
-    EnemySpawner spawner(player);
-    g.addPlugin(spawner);
-    sf::Music* music = sfml.music().get("ambiance");
+    g.addPlugin<EnemySpawner>(player);
+    sf::Music* music = sfml->music().get("ambiance");
     music->setLoop(true);
     music->play();
     g.run();
