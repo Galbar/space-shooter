@@ -1,6 +1,5 @@
 #ifndef ENEMY_HPP
 #define ENEMY_HPP
-#include <iostream>
 #include "Hum2D/Hum2D.hpp"
 #include "Hum2D/SFML.hpp"
 #include "Resources.hpp"
