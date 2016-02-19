@@ -4,11 +4,10 @@
 #include <sstream>
 #include "Hum2D/SFML.hpp"
 
-std::stringstream readFileContents(const std::string& filename)
+void readFileContents(const std::string& filename, std::stringstream& ss)
 {
     std::ifstream file;
     file.open(filename.c_str());
-    std::stringstream ss;
     std::string line;
     while (std::getline(file, line))
     {
@@ -19,14 +18,14 @@ std::stringstream readFileContents(const std::string& filename)
         }
     }
     file.close();
-    return ss;
 }
 
 void loadAnimation(h2d::SFMLPlugin& sfml, const std::string& animation_name, const std::string& filename)
 {
     std::ifstream animation_file;
     animation_file.open(filename.c_str());
-    std::stringstream ss = readFileContents(filename);
+    std::stringstream ss;
+    readFileContents(filename, ss);
     h2d::SpriteAnimation animation;
     std::string texture_name;
     int num_frames;
@@ -56,7 +55,8 @@ void loadAnimation(h2d::SFMLPlugin& sfml, const std::string& animation_name, con
 
 void loadResources(h2d::SFMLPlugin& sfml, const std::string& resources_filename)
 {
-    std::stringstream ss = readFileContents(resources_filename);
+    std::stringstream ss;
+    readFileContents(resources_filename, ss);
     std::string word, TYPE;
     while (ss >> word)
     {

@@ -15,7 +15,8 @@ public:
     {
         if (s_vel == -1)
         {
-            std::stringstream ss = readFileContents("res/config/Bullet.cfg");
+            std::stringstream ss;
+            readFileContents("res/config/Bullet.cfg", ss);
             ss >> s_vel;
         }
     }

@@ -14,7 +14,8 @@ public:
     {
         if (s_vel == -1)
         {
-            std::stringstream ss = readFileContents("res/config/Player.cfg");
+            std::stringstream ss;
+            readFileContents("res/config/Player.cfg", ss);
             ss
                 >> s_vel
                 >> s_ms_shoot

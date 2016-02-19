@@ -16,7 +16,8 @@ public:
     {
         if (s_vel == -1)
         {
-            std::stringstream ss = readFileContents("res/config/Enemy.cfg");
+            std::stringstream ss;
+            readFileContents("res/config/Enemy.cfg", ss);
             ss >> s_vel;
             ss >> s_min_player_dist;
         }
