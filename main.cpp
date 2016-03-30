@@ -12,7 +12,7 @@ int main()
     loadResources(*sfml, "res/resources.def");
 
     auto a = g.makeActor();
-    auto player = a->addBehaviour<Player>();
+    auto player = a->addBehavior<Player>();
     a->transform().x = 200;
     a->transform().y = 200;
 

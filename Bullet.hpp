@@ -6,7 +6,7 @@
 #include "math.hpp"
 
 class Enemy;
-class Bullet : public h2d::Behaviour
+class Bullet : public h2d::Behavior
 {
 public:
     Bullet(double comp_x, double comp_y):
@@ -23,14 +23,14 @@ public:
     void init() override
     {
         h2d::SFMLPlugin* sfml = actor().game().getPlugin<h2d::SFMLPlugin>();
-        p_explode = actor().addBehaviour<h2d::AnimatedSprite>(sfml->spriteAnimations().get("bullet_explosion"));
+        p_explode = actor().addBehavior<h2d::AnimatedSprite>(sfml->spriteAnimations().get("bullet_explosion"));
         p_explode->disable();
         p_explode->setLooping(false);
         p_explode->sprite().setOrigin(12, 12);
-        p_bullet = actor().addBehaviour<h2d::Sprite>(*sfml->textures().get("sprites"), sf::IntRect(0, 96, 24, 24));
+        p_bullet = actor().addBehavior<h2d::Sprite>(*sfml->textures().get("sprites"), sf::IntRect(0, 96, 24, 24));
         p_bullet->sprite().setOrigin(12, 18);
 
-        p_kinematic = actor().addBehaviour<h2d::Kinematic>();
+        p_kinematic = actor().addBehavior<h2d::Kinematic>();
         p_kinematic->velocity().x = p_comp_x * s_vel;
         p_kinematic->velocity().y = p_comp_y * s_vel;
 
@@ -69,9 +69,9 @@ public:
                 {
                     try
                     {
-                        a->getBehaviour<Enemy>();
+                        a->getBehavior<Enemy>();
                     }
-                    catch (h2d::exception::BehaviourNotFound e)
+                    catch (h2d::exception::BehaviorNotFound e)
                     {
                         continue;
                     }

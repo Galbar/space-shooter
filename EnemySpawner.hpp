@@ -22,7 +22,7 @@ public:
         //if (game().getPlugin<h2d::SFMLPlugin>()->input().isKeyPressed(sf::Keyboard::Space))
         {
             auto enemy = game().makeActor();
-            enemy->addBehaviour<Enemy>(p_player);
+            enemy->addBehavior<Enemy>(p_player);
 
             enemy->transform().x = rand() % 1000;
             enemy->transform().y = rand() % 1000;

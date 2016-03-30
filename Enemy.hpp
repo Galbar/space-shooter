@@ -6,7 +6,7 @@
 #include "Player.hpp"
 #include "math.hpp"
 
-class Enemy : public h2d::Behaviour
+class Enemy : public h2d::Behavior
 {
 public:
     enum State { WALKING, HITTING, WAITING, WIN, DONE };
@@ -25,16 +25,16 @@ public:
 
     void init() override
     {
-        p_kinematic = actor().addBehaviour<h2d::Kinematic>();
+        p_kinematic = actor().addBehavior<h2d::Kinematic>();
         p_prev_rotation = 0;
 
         p_sfml = actor().game().getPlugin<h2d::SFMLPlugin>();
-        p_sprite = actor().addBehaviour<h2d::AnimatedSprite>(p_sfml->spriteAnimations().get("enemy_walking"));
+        p_sprite = actor().addBehavior<h2d::AnimatedSprite>(p_sfml->spriteAnimations().get("enemy_walking"));
         p_sprite->sprite().setOrigin(24, 18);
         p_sprite->pause();
         actor().transform().rotation = -90;
 
-        p_blood = actor().addBehaviour<h2d::AnimatedSprite>(p_sfml->spriteAnimations().get("enemy_attack1_blood"));
+        p_blood = actor().addBehavior<h2d::AnimatedSprite>(p_sfml->spriteAnimations().get("enemy_attack1_blood"));
         p_blood->sprite().setOrigin(24, -17);
         p_blood->setLooping(false);
         p_blood->stop();
@@ -169,7 +169,7 @@ public:
         }
     }
 
-    static const char* behaviourName()
+    static const char* behaviorName()
     {
         return "Enemy";
     }

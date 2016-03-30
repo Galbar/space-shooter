@@ -7,7 +7,7 @@
 #include "Resources.hpp"
 #include "math.hpp"
 
-class Player : public h2d::Behaviour
+class Player : public h2d::Behavior
 {
 public:
     Player()
@@ -26,25 +26,25 @@ public:
     {
         p_sfml = actor().game().getPlugin<h2d::SFMLPlugin>();
         h2d::SpriteAnimation* player_animation = p_sfml->spriteAnimations().get("player");
-        p_sprite = actor().addBehaviour<h2d::AnimatedSprite>(player_animation);
+        p_sprite = actor().addBehavior<h2d::AnimatedSprite>(player_animation);
         p_sprite->pause();
         p_sprite->sprite().setOrigin(24, 18);
         p_sprite->transform().rotation = -90;
 
-        p_kinematic = actor().addBehaviour<h2d::Kinematic>();
+        p_kinematic = actor().addBehavior<h2d::Kinematic>();
         p_prev_rotation = 0;
         p_live = s_lives;
 
         h2d::Actor* helper = actor().game().makeActor();
         helper->transform() = actor().transform();
-        p_helper_kinematic = helper->addBehaviour<h2d::Kinematic>();
+        p_helper_kinematic = helper->addBehavior<h2d::Kinematic>();
         helper->transform().z = 1000;
         helper->transform().y -= 30;
         helper->transform().x -= 20;
-        auto rect = helper->addBehaviour<h2d::Rectangle>(sf::Vector2f(40, 5), sf::Color::Transparent);
+        auto rect = helper->addBehavior<h2d::Rectangle>(sf::Vector2f(40, 5), sf::Color::Transparent);
         rect->rectangle().setOutlineColor(sf::Color::Blue);
         rect->rectangle().setOutlineThickness(1);
-        p_live_rectangle = helper->addBehaviour<h2d::Rectangle>(sf::Vector2f(40, 5), sf::Color::Green);
+        p_live_rectangle = helper->addBehavior<h2d::Rectangle>(sf::Vector2f(40, 5), sf::Color::Green);
     }
 
     void fixedUpdate() override
@@ -121,7 +121,7 @@ public:
             double mod = sqrt(cuad(x) + cuad(y));
             x /= mod;
             y /= mod;
-            bullet->addBehaviour<Bullet>(x, y);
+            bullet->addBehavior<Bullet>(x, y);
             bullet->transform().x = actor().transform().x + 30 * x - 7 * y;
             bullet->transform().y = actor().transform().y + 30 * y + 7 * x;
             p_clock.reset();
