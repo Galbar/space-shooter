@@ -10,7 +10,7 @@ mkdir /root/folder/
 cd /root/folder/
 
 # Clone necessary repos
-git clone https://github.com/Galbar/Hummingbird2D.git Hum2D
+git clone --branch hum2d https://github.com/Galbar/hummingbird.git Hum2D
 git clone https://github.com/Galbar/Hummingbird2D-SFML.git SFML
 git clone https://github.com/Galbar/space-shooter.git space-shooter
 
