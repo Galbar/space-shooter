@@ -6,32 +6,28 @@ Compiling & running
 ===================
 ```
 # Make directory for project
-mkdir /root/folder/
-cd /root/folder/
+mkdir space-shooter
+cd space-shooter
 
 # Clone necessary repos
-git clone https://github.com/Galbar/Hummingbird2D.git Hum2D
-git clone https://github.com/Galbar/Hummingbird2D-SFML.git SFML
+git clone https://github.com/Galbar/hummingbird.git
+git clone https://github.com/Galbar/hummingbird-MOGL.git MOGL
 git clone https://github.com/Galbar/space-shooter.git space-shooter
 
 # Compile framework
-cd Hum2D
+cd hummingbird
 make
 
 # Compile SFML-based extension
-cd ../SFML
+cd ../MOGL
 make
 
 # Compile game
 cd ../space-shooter
 make
 
-# Add libraries to the linker path
-# (for OSX the variable is DYLD_LIBRARY_PATH)
-export LD_LIBRARY_PATH=/root/folder/Hum2D/lib/:/root/folder/SFML/lib/
-
 # Run game
-./game
+LD_LIBRARY_PATH=../hummingbird/lib:../MOGL/lib ./game
 ```
 
 Controls

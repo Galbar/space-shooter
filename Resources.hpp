@@ -2,7 +2,7 @@
 #define RESOURCES_LOAD
 #include <fstream>
 #include <sstream>
-#include "Hum2D/SFML.hpp"
+#include "MOGL/MOGL.hpp"
 
 void readFileContents(const std::string& filename, std::stringstream& ss)
 {
@@ -20,13 +20,13 @@ void readFileContents(const std::string& filename, std::stringstream& ss)
     file.close();
 }
 
-void loadAnimation(h2d::SFMLPlugin& sfml, const std::string& animation_name, const std::string& filename)
+void loadAnimation(mogl::MultimediaOGL& mogl, const std::string& animation_name, const std::string& filename)
 {
     std::ifstream animation_file;
     animation_file.open(filename.c_str());
     std::stringstream ss;
     readFileContents(filename, ss);
-    h2d::SpriteAnimation animation;
+    mogl::SpriteAnimation animation;
     std::string texture_name;
     int num_frames;
     ss
@@ -38,7 +38,7 @@ void loadAnimation(h2d::SFMLPlugin& sfml, const std::string& animation_name, con
         >> animation.width
         >> animation.height
         >> num_frames;
-    animation.texture = sfml.textures().get(texture_name);
+    animation.texture = mogl.textures().get(texture_name);
     int x;
     for (int i = 0; i < num_frames; ++i)
     {
@@ -48,12 +48,12 @@ void loadAnimation(h2d::SFMLPlugin& sfml, const std::string& animation_name, con
     for (int i = 0; i < num_frames; ++i)
     {
         ss >> x;
-        animation.frame_time.push_back(h2d::Time::milliseconds(x));
+        animation.frame_time.push_back(hum::Time::milliseconds(x));
     }
-    sfml.spriteAnimations().load(animation_name, animation);
+    mogl.spriteAnimations().load(animation_name, animation);
 }
 
-void loadResources(h2d::SFMLPlugin& sfml, const std::string& resources_filename)
+void loadResources(mogl::MultimediaOGL& mogl, const std::string& resources_filename)
 {
     std::stringstream ss;
     readFileContents(resources_filename, ss);
@@ -70,25 +70,25 @@ void loadResources(h2d::SFMLPlugin& sfml, const std::string& resources_filename)
         {
             std::string file;
             ss >> file;
-            sfml.textures().load(word, "res/textures/" + file);
+            mogl.textures().load(word, "res/textures/" + file);
         }
         else if (TYPE == "ANIMATIONS")
         {
             std::string file;
             ss >> file;
-            loadAnimation(sfml, word, "res/animations/" + file);
+            loadAnimation(mogl, word, "res/animations/" + file);
         }
         else if (TYPE == "SOUNDS")
         {
             std::string file;
             ss >> file;
-            sfml.sounds().load(word, "res/sounds/" + file);
+            mogl.sounds().load(word, "res/sounds/" + file);
         }
         else if (TYPE == "MUSIC")
         {
             std::string file;
             ss >> file;
-            sfml.music().load(word, "res/music/" + file);
+            mogl.music().load(word, "res/music/" + file);
         }
     }
 }

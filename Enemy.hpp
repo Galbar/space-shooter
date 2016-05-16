@@ -1,12 +1,12 @@
 #ifndef ENEMY_HPP
 #define ENEMY_HPP
-#include "Hum2D/Hum2D.hpp"
-#include "Hum2D/SFML.hpp"
+#include "hummingbird/hum.hpp"
+#include "MOGL/MOGL.hpp"
 #include "Resources.hpp"
 #include "Player.hpp"
 #include "math.hpp"
 
-class Enemy : public h2d::Behavior
+class Enemy : public hum::Behavior
 {
 public:
     enum State { WALKING, HITTING, WAITING, WIN, DONE };
@@ -25,29 +25,33 @@ public:
 
     void init() override
     {
-        p_kinematic = actor().addBehavior<h2d::Kinematic>();
+        p_kinematic = actor().addBehavior<hum::Kinematic>();
         p_prev_rotation = 0;
 
-        p_sfml = actor().game().getPlugin<h2d::SFMLPlugin>();
-        p_sprite = actor().addBehavior<h2d::AnimatedSprite>(p_sfml->spriteAnimations().get("enemy_walking"));
-        p_sprite->sprite().setOrigin(24, 18);
+        p_mogl = actor().game().getPlugin<mogl::MultimediaOGL>();
+        p_sprite = actor().addBehavior<mogl::AnimatedSprite>(p_mogl->spriteAnimations().get("enemy_walking"));
         p_sprite->pause();
-        actor().transform().rotation = -90;
+        p_sprite->setOrigin(hum::Vector3f(24./48., 18./48., 0));
+        p_sprite->transform().scale.x = 48.;
+        p_sprite->transform().scale.y = 48.;
+        actor().transform().rotation.z = -90;
 
-        p_blood = actor().addBehavior<h2d::AnimatedSprite>(p_sfml->spriteAnimations().get("enemy_attack1_blood"));
-        p_blood->sprite().setOrigin(24, -17);
+        p_blood = actor().addBehavior<mogl::AnimatedSprite>(p_mogl->spriteAnimations().get("enemy_attack1_blood"));
         p_blood->setLooping(false);
         p_blood->stop();
         p_blood->disable();
+        p_blood->setOrigin(hum::Vector3f(24./48., -10./24., 0));
+        p_blood->transform().scale.x = 48.;
+        p_blood->transform().scale.y = 24.;
 
         p_status = WAITING;
     }
 
     void onDestroy() override
     {
-        if (p_sfml->sounds().get(p_sound) != nullptr)
+        if (p_mogl->sounds().get(p_sound) != nullptr)
         {
-            p_sfml->sounds().get(p_sound)->stop();
+            p_mogl->sounds().get(p_sound)->stop();
         }
     }
 
@@ -67,8 +71,8 @@ public:
         }
 
         // Look at the player
-        double x = p_player->actor().transform().x - actor().transform().x;
-        double y = p_player->actor().transform().y - actor().transform().y;
+        double x = p_player->actor().transform().position.x - actor().transform().position.x;
+        double y = p_player->actor().transform().position.y - actor().transform().position.y;
         double angleInRadians = std::atan2(y, x);
         double angleInDegrees = (angleInRadians / M_PI) * 180.0;
         double delta = angleInDegrees - p_prev_rotation;
@@ -80,18 +84,18 @@ public:
         {
             delta += 360;
         }
-        p_kinematic->velocity().rotation = delta / actor().game().fixedUpdateTime().asSeconds();
+        p_kinematic->velocity().rotation.z = delta / actor().game().fixedUpdateTime().asSeconds();
         p_prev_rotation = angleInDegrees;
 
-        p_kinematic->velocity().x = 0;
-        p_kinematic->velocity().y = 0;
+        p_kinematic->velocity().position.x = 0;
+        p_kinematic->velocity().position.y = 0;
 
         double mod = sqrt(cuad(x) + cuad(y));
         if (p_status == WIN)
         {
             if (p_clock.getTime().asSeconds() > 1)
             {
-                p_sprite->setSpriteAnimation(p_sfml->spriteAnimations().get("enemy_win"));
+                p_sprite->setSpriteAnimation(p_mogl->spriteAnimations().get("enemy_win"));
                 p_sprite->setLooping(false);
                 p_sprite->play();
                 p_status = DONE;
@@ -101,16 +105,16 @@ public:
         {
             x /= mod;
             y /= mod;
-            p_kinematic->velocity().x = x * s_vel;
-            p_kinematic->velocity().y = y * s_vel;
-            if (p_sprite->status() != h2d::AnimatedSprite::PLAYING)
+            p_kinematic->velocity().position.x = x * s_vel;
+            p_kinematic->velocity().position.y = y * s_vel;
+            if (p_sprite->status() != mogl::AnimatedSprite::Status::PLAYING)
             {
                 p_sprite->play();
             }
 
-            if (p_sfml->sounds().get(p_sound) == nullptr and rand()%100 < 10)
+            if (p_mogl->sounds().get(p_sound) == nullptr and rand()%100 < 10)
             {
-                auto info = p_sfml->sounds().play("roar", 1000);
+                auto info = p_mogl->sounds().play("roar", 1000);
                 info.second->setAttenuation(0.1);
                 p_sound = info.first;
             }
@@ -121,19 +125,19 @@ public:
             {
                 if (p_status != HITTING)
                 {
-                    p_sprite->setSpriteAnimation(p_sfml->spriteAnimations().get("enemy_attack1"));
+                    p_sprite->setSpriteAnimation(p_mogl->spriteAnimations().get("enemy_attack1"));
                     p_sprite->play();
                     p_sprite->setLooping(false);
                     p_status = HITTING;
-                    sf::Sound* sound = p_sfml->sounds().play("enemy_attack", 50).second;
-                    sound->setPosition(actor().transform().x, actor().transform().y, 0);
+                    sf::Sound* sound = p_mogl->sounds().play("enemy_attack", 50).second;
+                    sound->setPosition(actor().transform().position.x, actor().transform().position.y, 0);
                     sound->setAttenuation(0.01);
                 }
                 else
                 {
-                    if (p_sprite->status() == h2d::AnimatedSprite::STOPPED)
+                    if (p_sprite->status() == mogl::AnimatedSprite::Status::STOPPED)
                     {
-                        p_sprite->setSpriteAnimation(p_sfml->spriteAnimations().get("enemy_walking"));
+                        p_sprite->setSpriteAnimation(p_mogl->spriteAnimations().get("enemy_walking"));
                         p_sprite->setLooping(true);
                         p_status = WAITING;
 
@@ -155,17 +159,17 @@ public:
             }
             else
             {
-                h2d::Time t = p_clock.getTime();
+                hum::Time t = p_clock.getTime();
                 if (t.asSeconds() > 1)
                 {
                     p_status = WALKING;
                 }
             }
         }
-        sf::Sound* sound = p_sfml->sounds().get(p_sound);
+        sf::Sound* sound = p_mogl->sounds().get(p_sound);
         if (sound != nullptr)
         {
-            sound->setPosition(actor().transform().x, actor().transform().y, 0);
+            sound->setPosition(actor().transform().position.x, actor().transform().position.y, 0);
         }
     }
 
@@ -177,15 +181,15 @@ public:
 private:
     static double s_vel;
     static double s_min_player_dist;
-    h2d::Clock p_clock;
+    hum::Clock p_clock;
     State p_status;
     Player* p_player;
-    h2d::Kinematic* p_kinematic;
+    hum::Kinematic* p_kinematic;
     double p_prev_rotation;
-    h2d::AnimatedSprite* p_sprite;
-    h2d::AnimatedSprite* p_blood;
-    h2d::SFMLPlugin* p_sfml;
-    h2d::SoundId p_sound;
+    mogl::AnimatedSprite* p_sprite;
+    mogl::AnimatedSprite* p_blood;
+    mogl::MultimediaOGL* p_mogl;
+    mogl::SoundId p_sound;
 };
 double Enemy::s_vel = -1;
 double Enemy::s_min_player_dist = -1;
