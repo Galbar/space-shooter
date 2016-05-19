@@ -12,9 +12,9 @@ int main()
     loadResources(*mogl, "res/resources.def");
 
     mogl->getCamera().setOrthogonal(0, -1000., 1000., 0);
-    mogl->getCamera().setPosition(glm::vec3(0, 0, -1));
-    mogl->getCamera().setCenter(glm::vec3(0, 0, 1));
-    mogl->getCamera().setUp(glm::vec3(0, 1, 0));
+    mogl->getCamera().setPosition(hum::Vector3f(0, 0, -1));
+    mogl->getCamera().setCenter(hum::Vector3f(0, 0, 1));
+    mogl->getCamera().setUp(hum::Vector3f(0, 1, 0));
 
     auto a = g.makeActor();
     auto player = a->addBehavior<Player>();
