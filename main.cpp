@@ -8,13 +8,10 @@ int main()
 {
     hum::Game g(60);
     g.addPlugin<hum::KinematicWorld>();
-    mogl::MultimediaOGL* mogl = g.addPlugin<mogl::MultimediaOGL>(sf::VideoMode(1000, 1000), "juego");
+    mogl::MultimediaOGL* mogl = g.addPlugin<mogl::MultimediaOGL>(sf::VideoMode(1000, 1000), "Space Shooter");
     loadResources(*mogl, "res/resources.def");
 
     mogl->getCamera().setOrthogonal(0, -21, 21, 0);
-    mogl->getCamera().setPosition(hum::Vector3f(0, 0, -1));
-    mogl->getCamera().setCenter(hum::Vector3f(0, 0, 1));
-    mogl->getCamera().setUp(hum::Vector3f(0, 1, 0));
 
     auto a = g.makeActor();
     auto player = a->addBehavior<Player>();
