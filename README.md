@@ -10,8 +10,8 @@ mkdir space-shooter
 cd space-shooter
 
 # Clone necessary repos
-git clone https://github.com/Galbar/hummingbird.git
-git clone https://github.com/Galbar/hummingbird-MOGL.git MOGL
+git clone -b TFG https://github.com/Galbar/hummingbird.git
+git clone -b TFG https://github.com/Galbar/hummingbird-MOGL.git MOGL
 git clone https://github.com/Galbar/space-shooter.git space-shooter
 git clone https://github.com/g-truc/glm.git
 
