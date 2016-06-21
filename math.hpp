@@ -2,7 +2,7 @@
 #define GAME_MATH_HPP
 #include <cmath>
 
-double cuad(double x)
+float square(float x)
 {
     return x*x;
 }

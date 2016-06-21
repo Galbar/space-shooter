@@ -8,8 +8,23 @@
 
 class Enemy : public hum::Behavior
 {
-public:
+private:
     enum State { WALKING, HITTING, WAITING, WIN, DONE };
+
+    static float s_vel;
+    static float s_min_player_dist;
+
+    hum::Clock p_clock;
+    State p_status;
+    Player* p_player;
+    hum::Kinematic* p_kinematic;
+    float p_prev_rotation;
+    mogl::AnimatedSprite* p_sprite;
+    mogl::AnimatedSprite* p_blood;
+    mogl::MultimediaOGL* p_mogl;
+    mogl::SoundId p_sound;
+
+public:
     Enemy(Player* player):
     p_player(player),
     p_sound(0)
@@ -32,8 +47,6 @@ public:
         p_sprite = actor().addBehavior<mogl::AnimatedSprite>(p_mogl->spriteAnimations().get("enemy_walking"));
         p_sprite->pause();
         p_sprite->setOrigin(hum::Vector3f(24./48., 18./48., 0));
-        p_sprite->transform().scale.x = 48.;
-        p_sprite->transform().scale.y = 48.;
         actor().transform().rotation.z = -90;
 
         p_blood = actor().addBehavior<mogl::AnimatedSprite>(p_mogl->spriteAnimations().get("enemy_attack1_blood"));
@@ -41,8 +54,6 @@ public:
         p_blood->stop();
         p_blood->disable();
         p_blood->setOrigin(hum::Vector3f(24./48., -10./24., 0));
-        p_blood->transform().scale.x = 48.;
-        p_blood->transform().scale.y = 24.;
 
         p_status = WAITING;
     }
@@ -71,11 +82,11 @@ public:
         }
 
         // Look at the player
-        double x = p_player->actor().transform().position.x - actor().transform().position.x;
-        double y = p_player->actor().transform().position.y - actor().transform().position.y;
-        double angleInRadians = std::atan2(y, x);
-        double angleInDegrees = (angleInRadians / M_PI) * 180.0;
-        double delta = angleInDegrees - p_prev_rotation;
+        float x = p_player->actor().transform().position.x - actor().transform().position.x;
+        float y = p_player->actor().transform().position.y - actor().transform().position.y;
+        float angleInRadians = std::atan2(y, x);
+        float angleInDegrees = (angleInRadians / M_PI) * 180.0;
+        float delta = angleInDegrees - p_prev_rotation;
         if (delta > 180)
         {
             delta -= 360;
@@ -90,7 +101,7 @@ public:
         p_kinematic->velocity().position.x = 0;
         p_kinematic->velocity().position.y = 0;
 
-        double mod = sqrt(cuad(x) + cuad(y));
+        float mod = sqrt(square(x) + square(y));
         if (p_status == WIN)
         {
             if (p_clock.getTime().asSeconds() > 1)
@@ -112,7 +123,7 @@ public:
                 p_sprite->play();
             }
 
-            if (p_mogl->sounds().get(p_sound) == nullptr and rand()%100 < 10)
+            if (p_mogl->sounds().get(p_sound) == nullptr and (rand()%100) > 99)
             {
                 auto info = p_mogl->sounds().play("roar", 1000);
                 info.second->setAttenuation(0.1);
@@ -123,7 +134,7 @@ public:
         {
             if (p_status != WAITING)
             {
-                if (p_status != HITTING)
+                if (p_status != HITTING) // state == WALKING and player is in hitting distance
                 {
                     p_sprite->setSpriteAnimation(p_mogl->spriteAnimations().get("enemy_attack1"));
                     p_sprite->play();
@@ -177,20 +188,7 @@ public:
     {
         return "Enemy";
     }
-
-private:
-    static double s_vel;
-    static double s_min_player_dist;
-    hum::Clock p_clock;
-    State p_status;
-    Player* p_player;
-    hum::Kinematic* p_kinematic;
-    double p_prev_rotation;
-    mogl::AnimatedSprite* p_sprite;
-    mogl::AnimatedSprite* p_blood;
-    mogl::MultimediaOGL* p_mogl;
-    mogl::SoundId p_sound;
 };
-double Enemy::s_vel = -1;
-double Enemy::s_min_player_dist = -1;
+float Enemy::s_vel = -1;
+float Enemy::s_min_player_dist = -1;
 #endif

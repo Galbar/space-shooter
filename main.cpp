@@ -11,15 +11,15 @@ int main()
     mogl::MultimediaOGL* mogl = g.addPlugin<mogl::MultimediaOGL>(sf::VideoMode(1000, 1000), "juego");
     loadResources(*mogl, "res/resources.def");
 
-    mogl->getCamera().setOrthogonal(0, -1000., 1000., 0);
+    mogl->getCamera().setOrthogonal(0, -21, 21, 0);
     mogl->getCamera().setPosition(hum::Vector3f(0, 0, -1));
     mogl->getCamera().setCenter(hum::Vector3f(0, 0, 1));
     mogl->getCamera().setUp(hum::Vector3f(0, 1, 0));
 
     auto a = g.makeActor();
     auto player = a->addBehavior<Player>();
-    a->transform().position.x = 200;
-    a->transform().position.y = 200;
+    a->transform().position.x = 10;
+    a->transform().position.y = 10;
 
     g.addPlugin<EnemySpawner>(player);
     sf::Music* music = mogl->music().get("ambiance");

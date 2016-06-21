@@ -23,8 +23,8 @@ public:
             auto enemy = game().makeActor();
             enemy->addBehavior<Enemy>(p_player);
 
-            enemy->transform().position.x = rand() % 1000;
-            enemy->transform().position.y = rand() % 1000;
+            enemy->transform().position.x = rand() % (1000/48);
+            enemy->transform().position.y = rand() % (1000/48);
             clk.reset();
         }
     }

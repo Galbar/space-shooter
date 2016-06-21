@@ -9,7 +9,7 @@ class Enemy;
 class Bullet : public hum::Behavior
 {
 public:
-    Bullet(double comp_x, double comp_y):
+    Bullet(float comp_x, float comp_y):
     p_comp_x(comp_x),
     p_comp_y(comp_y)
     {
@@ -27,19 +27,19 @@ public:
         p_explode->disable();
         p_explode->setLooping(false);
         p_explode->setOrigin(hum::Vector3f(12./24., 12./24., 0));
-        p_explode->transform().scale.x = 24.;
-        p_explode->transform().scale.y = 24.;
+        p_explode->transform().scale.x = 0.5;
+        p_explode->transform().scale.y = 0.5;
         p_bullet = actor().addBehavior<mogl::Sprite>(mogl->textures().get("sprites"), sf::IntRect(0, 96, 24, 24));
+        p_bullet->transform().scale.x = 0.5;
+        p_bullet->transform().scale.y = 0.5;
         p_explode->setOrigin(hum::Vector3f(12./24., 18./24., 0));
-        p_bullet->transform().scale.x = 24.;
-        p_bullet->transform().scale.y = 24.;
 
         p_kinematic = actor().addBehavior<hum::Kinematic>();
         p_kinematic->velocity().position.x = p_comp_x * s_vel;
         p_kinematic->velocity().position.y = p_comp_y * s_vel;
 
-        double angleInRadians = std::atan2(p_comp_y, p_comp_x);
-        double angleInDegrees = (angleInRadians / M_PI) * 180.0;
+        float angleInRadians = std::atan2(p_comp_y, p_comp_x);
+        float angleInDegrees = (angleInRadians / M_PI) * 180.0;
         p_bullet->transform().rotation.z = angleInDegrees - 90;
 
         mogl->sounds().play("gun_shot", 40, false, true);
@@ -62,14 +62,14 @@ public:
         else if (not p_explode->isEnabled())
         {
             auto& actors = actor().game().actors();
-            double x, y, mod;
+            float x, y, mod;
             for (auto it = actors.begin(); it != actors.end(); ++it)
             {
                 hum::Actor* a = *it;
                 x = a->transform().position.x - actor().transform().position.x;
                 y = a->transform().position.y - actor().transform().position.y;
-                mod = sqrt(cuad(x) + cuad(y));
-                if (mod < 25)
+                mod = sqrt(square(x) + square(y));
+                if (mod < 0.52)
                 {
                     try
                     {
@@ -90,12 +90,12 @@ public:
         }
     }
 private:
-    static double s_vel;
-    double p_comp_x, p_comp_y;
+    static float s_vel;
+    float p_comp_x, p_comp_y;
     hum::Clock clk;
     hum::Kinematic* p_kinematic;
     mogl::Sprite* p_bullet;
     mogl::AnimatedSprite* p_explode;
 };
-double Bullet::s_vel = -1;
+float Bullet::s_vel = -1;
 #endif
