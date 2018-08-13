@@ -13,7 +13,7 @@ cd space-shooter
 git clone -b TFG https://github.com/Galbar/hummingbird.git
 git clone -b TFG https://github.com/Galbar/hummingbird-MOGL.git MOGL
 git clone https://github.com/Galbar/space-shooter.git space-shooter
-git clone https://github.com/g-truc/glm.git
+git clone -b 0.9.7.5 https://github.com/g-truc/glm.git
 
 # Compile framework
 cd hummingbird
